@@ -22,11 +22,11 @@ describe Babel do
       }
     }
     class Hash
-      def self.new(hash = nil) 
+      def self.new(hash = nil, &block) 
         if hash
           self[hash]
         else 
-          super
+          super &block
         end
       end
     end
