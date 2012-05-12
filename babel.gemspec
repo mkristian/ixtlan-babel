@@ -4,6 +4,8 @@ Gem::Specification.new do |s|
   s.version = '0.1'
 
   s.summary = 'babel offers a filter for hashes and with that comes json/yaml/xml de/serialization of models which provides a hash representation'
+  s.description = 'babel offers a filter for hashes and with that comes json/yaml/xml de/serialization of models which provides a hash representationi. possible models are activerecord, activemodel, resources from datamapper, virtus'
+  s.homepage = 'https://github.com/mkristian/babel'
 
   s.authors = ['Kristian Meier']
   s.email = ['m.kristian@web.de']
