@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.files += Dir['Gemfile*']
 
   s.test_files += Dir['spec/**/*_spec.rb']
+  s.add_development_dependency 'rake', '= 0.9.2.2'
   s.add_development_dependency 'json_pure', '~> 1.6.1'
   s.add_development_dependency 'minitest', '2.11.3'
 end
