@@ -24,8 +24,12 @@ describe Babel do
       }
     }
     class Hash
-      def self.new(hash) 
-        self[hash]
+      def self.new(hash = nil) 
+        if hash
+          self[hash]
+        else 
+          super
+        end
       end
     end
     data

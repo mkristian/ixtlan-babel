@@ -11,7 +11,10 @@ Gem::Specification.new do |s|
 
   s.files += Dir['lib/**/*']
   s.files += Dir['spec/**/*']
+  s.files += Dir['MIT-LICENSE'] + Dir['*.md']
+  s.files += Dir['Gemfile*']
+
   s.test_files += Dir['spec/**/*_spec.rb']
-  #s.add_development_dependency 'virtus', '~>0.9.0'
+  s.add_development_dependency 'json_pure', '~> 1.6.1'
   s.add_development_dependency 'minitest', '2.11.3'
 end
