@@ -106,12 +106,13 @@ module Babel
         when Array
           if include.include?(k)
             models = model.send(k)
+            j = -1
             case include
             when Array
-              result[k] = v.enum_with_index.collect { |i, j| filter_data(models[j], i, &block) }
+              result[k] = v.collect { |i| j += 1; filter_data(models[j], i, &block) }
             when Hash
               opts = include[k]
-              result[k] = v.enum_with_index.collect { |i, j| filter_data(models[j], i, opts, &block) }
+              result[k] = v.collect { |i| j += 1; filter_data(models[j], i, opts, &block) }
             end
           end
         else

@@ -1,6 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/mkristian/babel.png)](http://travis-ci.org/mkristian/babel)
-
-# babel #
+# vellam [![Build Status](https://secure.travis-ci.org/mkristian/babel.png)](http://travis-ci.org/mkristian/babel) #
 
 rails comes with `to_json` and `to_xml` on models and you can give them an option map to control how the whole object tree gets serialized.
 
