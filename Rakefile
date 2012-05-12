@@ -4,5 +4,8 @@ task :spec do
   require 'rubygems'
   require 'bundler/setup'
   require 'minitest/autorun'
-  Dir['spec/*_spec.rb'].each { |f| require f }
+
+  $LOAD_PATH << "spec"
+
+  Dir['spec/*_spec.rb'].each { |f| require File.basename(f.sub(/.rb$/, '')) }
 end
