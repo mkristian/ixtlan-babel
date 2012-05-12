@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 Gem::Specification.new do |s|
-  s.name = 'babel'
-  s.version = '0.2'
+  s.name = 'vellam'
+  s.version = '0.1'
 
   s.summary = 'babel offers a filter for hashes and with that comes json/yaml/xml de/serialization of models which provides a hash representation'
   s.description = 'babel offers a filter for hashes and with that comes json/yaml/xml de/serialization of models which provides a hash representationi. possible models are activerecord, activemodel, resources from datamapper, virtus'
