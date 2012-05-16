@@ -53,9 +53,8 @@ module Babel
     end
 
     def to_hash(options = nil)
-      filter.use(options) if options
-      case @model_or_models
-      when Array
+      filter.use(filter.options.dup.merge!(options)) if options
+      if @model_or_models.respond_to? :collect
         @model_or_models.collect do |m|
           filter_model(attr(m), m)
         end
@@ -68,8 +67,8 @@ module Babel
       to_hash(options).to_json
     end
 
-    def to_xml(options = nil)
-      opts = fitler.options.dup
+    def to_xml(options = {})
+      opts = filter.options.dup.merge!(options)
       root = opts.delete :root
       fitler.use(opts)
       result = to_hash
