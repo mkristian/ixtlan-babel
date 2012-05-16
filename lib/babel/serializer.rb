@@ -54,7 +54,7 @@ module Babel
 
     def to_hash(options = nil)
       filter.use(filter.options.dup.merge!(options)) if options
-      if @model_or_models.respond_to? :collect
+      if @model_or_models.respond_to?(:collect) && ! @model_or_models.is_a?(Hash)
         @model_or_models.collect do |m|
           filter_model(attr(m), m)
         end
