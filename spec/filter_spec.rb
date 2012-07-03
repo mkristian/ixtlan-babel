@@ -9,7 +9,7 @@ class Hash
   end
 end
 
-describe Babel do
+describe Ixtlan::Babel do
   let(:data) do
     data = {
       'id' => 987,
@@ -33,8 +33,8 @@ describe Babel do
     data
   end
 
-  let(:serializer) { Babel::Serializer.new(data) }
-  let(:deserializer) { Babel::Deserializer.new(Hash) }
+  let(:serializer) { Ixtlan::Babel::Serializer.new(data) }
+  let(:deserializer) { Ixtlan::Babel::Deserializer.new(Hash) }
 
   it 'should serialize and deserialize a hash' do
     json = serializer.to_json
