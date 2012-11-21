@@ -90,7 +90,9 @@ module Ixtlan
             unless data.include?(m)
               raise "no block given to calculate the attributes from model" unless block
               models_or_model = model.send(m)
-              if models_or_model.respond_to?(:collect)
+              if models_or_model.is_a?(Array) && models_or_model.first.is_a?(String)
+                data[m] = models_or_model
+              elsif models_or_model.respond_to?(:collect)
                 data[m] = models_or_model.collect { |i| block.call(i) }
               else
                 data[m]= block.call(model.send(m))
@@ -127,8 +129,12 @@ module Ixtlan
                   end
                 end
               when Hash
-                opts = include[k]
-                result[k.to_s] = v.collect { |i| j += 1; filter_data(models[j], i, opts, &block) }
+                opts = include[k.to_s]
+                result[k.to_s] = v.collect do |i| 
+                  j += 1
+                  ndata = i.is_a?(Hash)? i : block.call(i)
+                  filter_data(models[j], ndata, opts, &block)
+                end
               end
             end
           else
