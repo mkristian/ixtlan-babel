@@ -18,9 +18,8 @@ module Ixtlan
         @map = map
       end
 
-      def default_context_key(default = nil)
-        @default = default if default
-        @default
+      def default_context_key(single = :single, collection = :collection)
+        @single, @collection = single, collection
       end
 
       def []=(key, options)
@@ -56,11 +55,15 @@ module Ixtlan
       end
 
       def filter(hash = {}, model = NO_MODEL, &block)
-        filter_data(model, hash, options, &block) if hash
+        filter_data(model, hash, hash.is_a?(Array) ? collection_options : single_options, &block) if hash
       end
 
-      def options
-        @options || context[default_context_key] || {}
+      def single_options
+        @options || context[default_context_key[0]] || {}
+      end
+
+      def collection_options
+        @options || context[default_context_key[1]] || {}
       end
 
       private
@@ -95,13 +98,22 @@ module Ixtlan
               elsif models_or_model.respond_to?(:collect)
                 data[m] = models_or_model.collect { |i| block.call(i) }
               else
-                data[m]= block.call(model.send(m))
+                val = model.send(m)
+                case val
+                when Fixnum
+                  data[m] = val
+                when String
+                  data[m] = val
+                when TrueClass
+                  data[m] = val
+                else
+                  data[m]= block.call(val)
+                end
               end
             end
           end
         end
         methods ||= []
-
         result = {}
         data.each do |k,v|
           case v

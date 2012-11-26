@@ -50,8 +50,8 @@ module Ixtlan
         model.model_name
       end
 
-      def self.default_context_key(default)
-        filter.default_context_key(default)
+      def self.default_context_key(single = :single, collection = :collection)
+        filter.default_context_key(single, collection)
       end
 
       def self.add_context(key, options = {})
@@ -66,12 +66,13 @@ module Ixtlan
       end
 
       def to_hash(options = nil)
-        filter.use(filter.options.dup.merge!(options)) if options
         if @model_or_models.respond_to?(:collect) && ! @model_or_models.is_a?(Hash)
+          filter.use(filter.collection_options.dup.merge!(options)) if options
           @model_or_models.collect do |m|
             filter_model(attr(m), m)
           end
         else
+          filter.use(filter.single_options.dup.merge!(options)) if options
           filter_model(attr(@model_or_models), @model_or_models)
         end
       end
@@ -81,7 +82,11 @@ module Ixtlan
       end
 
       def to_xml(options = {})
-        opts = filter.options.dup.merge!(options)
+        if @model_or_models.respond_to?(:collect) && ! @model_or_models.is_a?(Hash)
+          opts = filter.collection_options.dup.merge!(options)
+        else
+          opts = filter.single_options.dup.merge!(options)
+        end
         root = opts.delete :root
         fitler.use(opts)
         result = to_hash
@@ -104,7 +109,7 @@ module Ixtlan
       private
 
       def filter_model(model, data)
-        if root = filter.options[:root]
+        if root = filter.single_options[:root]
           {root.to_s => filter.filter(model, data){ |model| attr(model) } }
         else
           filter.filter(model, data){ |model| attr(model) }
