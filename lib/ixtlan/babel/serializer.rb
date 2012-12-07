@@ -66,13 +66,12 @@ module Ixtlan
       end
 
       def to_hash(options = nil)
-        if @model_or_models.respond_to?(:collect) && ! @model_or_models.is_a?(Hash)
-          filter.use(filter.collection_options.dup.merge!(options)) if options
-          @model_or_models.collect do |m|
+        setup_filter( options )
+        if collection?
+           @model_or_models.collect do |m|
             filter_model(attr(m), m)
           end
         else
-          filter.use(filter.single_options.dup.merge!(options)) if options
           filter_model(attr(@model_or_models), @model_or_models)
         end
       end
@@ -81,17 +80,30 @@ module Ixtlan
         to_hash(options).to_json
       end
 
-      def to_xml(options = {})
-        if @model_or_models.respond_to?(:collect) && ! @model_or_models.is_a?(Hash)
-          opts = filter.collection_options.dup.merge!(options)
-        else
-          opts = filter.single_options.dup.merge!(options)
-        end
-        root = opts.delete :root
-        fitler.use(opts)
+      def setup_filter(options)
+        o = if collection?
+              filter.collection_options.dup.merge!( options || {} )
+            else
+              filter.single_options.dup.merge!( options || {} )
+            end
+        filter.use( o )
+      end
+      private :setup_filter
+
+      def collection?
+        @is_collection ||= @model_or_models.respond_to?(:collect) && ! @model_or_models.is_a?(Hash)
+      end
+      private :collection?
+
+      def to_xml(options = nil)
+        setup_filter
+
         result = to_hash
+
+        root = filter.root
+
         if root && result.is_a?(Array) && root.respond_to?(:pluralize)
-          root = root.to_s.pluralize
+          root = root.pluralize
         end
         result.to_xml :root => root
       end
