@@ -66,6 +66,10 @@ module Ixtlan
         @options || context[default_context_key[1]] || {}
       end
 
+      def root
+        @root ||= single_options[:root]
+      end
+
       private
 
       def filter_data(model, data, options = {}, &block)

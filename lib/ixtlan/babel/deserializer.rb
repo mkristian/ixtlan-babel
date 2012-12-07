@@ -34,20 +34,17 @@ module Ixtlan
       end
 
       def from_hash(data, options = nil)
-        filter.use(options) if options
-        if root = filter.options[:root]
-          if data.is_a? Array
-            root = root.to_s
-            data.collect{ |d| @model_class.new(filter.filter(d[root])) }
+        filter.use( options ) if options
+        if data.is_a? Array
+          if filter.root
+            root = filter.root.to_s
+            data.collect{ |d| @model_class.new( filter.filter( d[ root ] ) ) }
           else
-            @model_class.new(filter.filter(data[root.to_s]))
+            data.collect{ |d| @model_class.new( filter.filter( d ) ) }
           end
         else
-          if data.is_a? Array
-            data.collect{ |d| @model_class.new(filter.filter(d)) }
-          else
-            @model_class.new(filter.filter(data))
-          end
+          data = data[ filter.root.to_s ] if filter.root
+          @model_class.new( filter.filter( data ) )
         end
       end
 
