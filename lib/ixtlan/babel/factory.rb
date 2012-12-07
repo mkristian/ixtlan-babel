@@ -2,6 +2,8 @@ module Ixtlan
   module Babel
     class Factory
 
+      NANOSECONDS_IN_DAY = Rational(1, 86400*10**9)
+
       class EmptyArraySerializer < Array
         def use(arg)
           self
@@ -11,7 +13,7 @@ module Ixtlan
       def initialize(custom_serializers = {})
         @map = {}
         add('DateTime') do |dt|
-          dt.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % (dt.sec_fraction / Date::NANOSECONDS_IN_DAY / 1000)) + dt.strftime('%z')
+          dt.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % (dt.sec_fraction / NANOSECONDS_IN_DAY / 1000)) + dt.strftime('%z')
         end
         add('ActiveSupport::TimeWithZone') do |tz|
           tz.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % tz.usec) + tz.strftime('%z')
