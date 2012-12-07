@@ -32,18 +32,22 @@ module Ixtlan
         filter.use(context_or_options)
         self
       end
+      
+      def from_array_hash( data )
+        if filter.root
+          data.collect{ |d| @model_class.new( filter.filter( d[ filter.root ] ) ) }
+        else
+          data.collect{ |d| @model_class.new( filter.filter( d ) ) }
+        end
+      end
+      private :from_array_hash
 
       def from_hash(data, options = nil)
         filter.use( options ) if options
         if data.is_a? Array
-          if filter.root
-            root = filter.root.to_s
-            data.collect{ |d| @model_class.new( filter.filter( d[ root ] ) ) }
-          else
-            data.collect{ |d| @model_class.new( filter.filter( d ) ) }
-          end
+          from_array_hash( data )
         else
-          data = data[ filter.root.to_s ] if filter.root
+          data = data[ filter.root ] if filter.root
           @model_class.new( filter.filter( data ) )
         end
       end

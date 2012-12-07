@@ -67,7 +67,7 @@ module Ixtlan
       end
 
       def root
-        @root ||= single_options[:root]
+        @root ||= single_options.key?(:root) ? single_options[:root].to_s : nil
       end
 
       private
