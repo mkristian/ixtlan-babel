@@ -15,14 +15,23 @@ module Ixtlan
                    else
                      []
                    end
+        @methods = (options[:methods] || []).collect { |m| m.to_s }
+      end
+
+      def methods
+        @methods + ( @include.is_a?( Array ) ? @include : @include.keys ) 
       end
 
       def allowed?( key )
-        ( @only && @only.include?( key ) ) || ( @only.nil? && !@except.include?( key ) )
+        ( @only && @only.include?( key ) ) || ( @only.nil? && !@except.include?( key ) ) || @methods.include?( key )
       end
 
       def include?( key )
         @include.include? key
+      end
+
+      def array?
+        @include.is_a?( Array )
       end
 
       def []( key )

@@ -1,4 +1,5 @@
-require 'ixtlan/babel/hash_only_filter'
+require 'ixtlan/babel/hash_filter'
+require 'ixtlan/babel/model_filter'
 module Ixtlan
   module Babel
     class Serializer
@@ -30,11 +31,11 @@ module Ixtlan
       private
 
       def self.filter
-        @filter ||= HashFilter.new
+        @filter ||= ModelFilter.new
       end
 
       def filter
-        @filter ||= self.class.filter.dup
+        @filter ||= @model_or_models.is_a?( Hash ) ? HashFilter.new : self.class.filter.dup
       end
 
       protected
@@ -69,10 +70,10 @@ module Ixtlan
         setup_filter( options )
         if collection?
            @model_or_models.collect do |m|
-            filter_model(attr(m), m)
+            filter_model( m )
           end
         else
-          filter_model(attr(@model_or_models), @model_or_models)
+          filter_model( @model_or_models )
         end
       end
 
@@ -120,11 +121,11 @@ module Ixtlan
 
       private
 
-      def filter_model(model, data)
+      def filter_model( model )
         if root = filter.single_options[:root]
-          {root.to_s => filter.filter(model, data){ |model| attr(model) } }
+          {root.to_s => filter.filter( model ){ |model| attr(model) } }
         else
-          filter.filter(model, data){ |model| attr(model) }
+          filter.filter( model ){ |model| attr(model) }
         end
       end 
     end

@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake', '~> 10.0.0'
   s.add_development_dependency 'json_pure', '~> 1.6.1'
   s.add_development_dependency 'minitest', '2.11.3'
+  s.add_development_dependency 'virtus', '~> 0.5.0'
 end

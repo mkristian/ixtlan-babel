@@ -9,7 +9,7 @@ class Hash
   end
 end
 
-describe Ixtlan::Babel do
+describe Ixtlan::Babel::HashFilter do
   let(:data) do
     data = {
       'id' => 987,

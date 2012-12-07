@@ -15,7 +15,7 @@ module Ixtlan
 
       public
 
-      def add_custom_serializers(map)
+      def add_custom_serializers( map )
         @map = map
       end
 
@@ -48,11 +48,10 @@ module Ixtlan
         self
       end
 
-      def filter(hash = {}, model = nil, &block)
+      def filter( hash = {} )
         if hash
           filter_data( hash, 
-                       Config.new( options_for( hash ) ), 
-                       &block) 
+                       Config.new( options_for( hash ) ) ) 
         end
       end
         
