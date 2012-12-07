@@ -1,4 +1,4 @@
-require 'ixtlan/babel/hash_filter'
+require 'ixtlan/babel/hash_only_filter'
 module Ixtlan
   module Babel
     class Serializer
