@@ -6,7 +6,7 @@ module Ixtlan
         if model
           data = block.call( model )
           filter_data( model, data,
-                       Config.new( options_for( data ) ),
+                       Context.new( options_for( data ) ),
                        &block ) 
         end
       end
@@ -23,8 +23,8 @@ module Ixtlan
         end
       end
 
-      def filter_data(model, data, config, &block)
-        config.methods.each do |m|
+      def filter_data(model, data, context, &block)
+        context.methods.each do |m|
           unless data.include?(m)
             data[ m ] = model.send( m.to_sym )
           end
@@ -34,11 +34,11 @@ module Ixtlan
         data.each do |k,v|
           k = k.to_s
           if v.respond_to? :attributes
-            result[ k ] = filter_data( v, block.call(v), config[ k ], &block ) if config.include?( k )
+            result[ k ] = filter_data( v, block.call(v), context[ k ], &block ) if context.include?( k )
           elsif v.is_a? Array
-            result[ k ] = filter_array( v, config[ k ], &block ) if config.include?( k )
+            result[ k ] = filter_array( v, context[ k ], &block ) if context.include?( k )
           else
-            result[ k ] = serialize( v ) if config.allowed?( k ) && ! v.respond_to?( :attributes )
+            result[ k ] = serialize( v ) if context.allowed?( k ) && ! v.respond_to?( :attributes )
           end
         end
         result

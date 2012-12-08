@@ -1,7 +1,7 @@
 require 'ixtlan/babel/context'
 module Ixtlan
   module Babel
-    class HashFilter
+    class FilterConfig
 
       def initialize(context_or_options = nil)
         use(context_or_options)
@@ -48,13 +48,6 @@ module Ixtlan
         self
       end
 
-      def filter( hash = {} )
-        if hash
-          filter_data( hash, 
-                       Context.new( options_for( hash ) ) ) 
-        end
-      end
-        
       def single_options
         @options || context[default_context_key[0]] || {}
       end
@@ -63,24 +56,15 @@ module Ixtlan
         @options || context[default_context_key[1]] || {}
       end
 
+      attr_accessor :root
       def root
         @root ||= single_options.key?(:root) ? single_options[:root].to_s : nil
       end
 
       private
 
-      def options_for( hash )
-        @options || (hash.is_a?(Array) ? collection_options : single_options)
-      end
-
-      def filter_array( array, options )
-        array.collect do |item| 
-          if item.is_a?( Array ) || item.is_a?( Hash )
-            filter_data( item, options )
-          else
-            item
-          end
-        end
+      def options_for( data )
+        @options || (data.is_a?(Array) ? collection_options : single_options)
       end
 
       def serialize( data )
@@ -90,22 +74,7 @@ module Ixtlan
           data
         end
       end
-      
-      def filter_data( data, context )
-        result = {}
-        data.each do |k,v|
-          k = k.to_s
-          case v
-          when Hash
-            result[ k ] = filter_data( v, context[ k ] ) if context.include?( k )
-          when Array
-            result[ k ] = filter_array( v, context[ k ] ) if context.include?( k )
-          else
-            result[ k ] = serialize( v ) if context.allowed?( k )
-          end
-        end
-        result
-      end
+
     end
   end
 end

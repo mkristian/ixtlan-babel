@@ -1,6 +1,6 @@
 module Ixtlan
   module Babel
-    class Config
+    class Context
 
       def initialize( options )
         @only = options[ :only ].collect { |o| o.to_s } if options[ :only ]
