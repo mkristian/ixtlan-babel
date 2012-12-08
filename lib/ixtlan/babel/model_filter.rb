@@ -24,12 +24,16 @@ module Ixtlan
         end
       end
 
-      def filter_data(model, data, context, &block)
+      def setup_data(model, data, context)
         context.methods.each do |m|
           unless data.include?(m)
             data[ m ] = model.send( m.to_sym )
           end
         end
+      end
+
+      def filter_data(model, data, context, &block)
+        setup_data(model, data, context)
         
         result = {}
         data.each do |k,v|
