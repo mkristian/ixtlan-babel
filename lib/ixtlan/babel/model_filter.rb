@@ -1,12 +1,13 @@
+require 'ixtlan/babel/abstract_filter'
 module Ixtlan
   module Babel
-    class ModelFilter < HashFilter
+    class ModelFilter < AbstractFilter
 
       def filter( model, &block )
         if model
           data = block.call( model )
           filter_data( model, data,
-                       Context.new( options_for( data ) ),
+                       Context.new( options ),
                        &block ) 
         end
       end

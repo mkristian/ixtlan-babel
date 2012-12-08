@@ -1,5 +1,6 @@
 require 'ixtlan/babel/hash_filter'
 require 'ixtlan/babel/model_filter'
+require 'ixtlan/babel/filter_config'
 module Ixtlan
   module Babel
     class Serializer
@@ -30,12 +31,12 @@ module Ixtlan
 
       private
 
-      def self.filter
-        @filter ||= ModelFilter.new
+      def self.config
+        @config ||= FilterConfig.new
       end
 
       def filter
-        @filter ||= @model_or_models.is_a?( Hash ) ? HashFilter.new : self.class.filter.dup
+        @filter ||= @model_or_models.is_a?( Hash ) ? HashFilter.new :  ModelFilter.new
       end
 
       protected
@@ -52,17 +53,17 @@ module Ixtlan
       end
 
       def self.default_context_key(single = :single, collection = :collection)
-        filter.default_context_key(single, collection)
+        config.default_context_key(single, collection)
       end
 
       def self.add_context(key, options = {})
-        filter[key] = options
+        config[key] = options
       end
 
       public
 
-      def use(context_or_options)
-        filter.use(context_or_options)
+      def use( context_or_options )
+        @context_or_options = context_or_options
         self
       end
 
@@ -83,11 +84,11 @@ module Ixtlan
 
       def setup_filter(options)
         o = if collection?
-              filter.collection_options.dup.merge!( options || {} )
+              self.class.config.collection_options( @context_or_options )
             else
-              filter.single_options.dup.merge!( options || {} )
+              self.class.config.single_options( @context_or_options )
             end
-        filter.use( o )
+        filter.options = o.merge!( options || {} )
       end
       private :setup_filter
 
@@ -122,7 +123,7 @@ module Ixtlan
       private
 
       def filter_model( model )
-        if root = filter.single_options[:root]
+        if root = self.class.config.root
           {root.to_s => filter.filter( model ){ |model| attr(model) } }
         else
           filter.filter( model ){ |model| attr(model) }

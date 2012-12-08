@@ -1,77 +1,16 @@
-require 'ixtlan/babel/context'
+require 'ixtlan/babel/abstract_filter'
 module Ixtlan
   module Babel
-    class HashFilter
+    class HashFilter < AbstractFilter
 
-      def initialize(context_or_options = nil)
-        use(context_or_options)
-      end
-      
-      private
-
-      def context
-        @context ||= {}
-      end
-
-      public
-
-      def add_custom_serializers( map )
-        @map = map
-      end
-
-      def default_context_key( single = :single, 
-                               collection = :collection )
-        @single, @collection = single, collection
-      end
-
-      def []=( key, options )
-        context[ key.to_sym ] = options if key
-      end
-
-      def []( key )
-        context[ key.to_sym ] if key
-      end
-
-      def use( context_or_options )
-        if context_or_options
-          case context_or_options
-          when Symbol  
-            if opts = context[ context_or_options ]
-              @options = opts.dup
-            end
-          when Hash
-            @options = context_or_options
-          end
-        else
-          @options = nil
+      def filter( data )
+        if data
+          filter_data( data, 
+                       Context.new( options ) )
         end
-        self
-      end
-
-      def filter( hash = {} )
-        if hash
-          filter_data( hash, 
-                       Context.new( options_for( hash ) ) ) 
-        end
-      end
-        
-      def single_options
-        @options || context[default_context_key[0]] || {}
-      end
-
-      def collection_options
-        @options || context[default_context_key[1]] || {}
-      end
-
-      def root
-        @root ||= single_options.key?(:root) ? single_options[:root].to_s : nil
       end
 
       private
-
-      def options_for( hash )
-        @options || (hash.is_a?(Array) ? collection_options : single_options)
-      end
 
       def filter_array( array, options )
         array.collect do |item| 
@@ -83,14 +22,6 @@ module Ixtlan
         end
       end
 
-      def serialize( data )
-        if @map && ser = @map[ data.class.to_s ]
-          ser.call(data)
-        else
-          data
-        end
-      end
-      
       def filter_data( data, context )
         result = {}
         data.each do |k,v|

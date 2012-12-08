@@ -8,34 +8,34 @@ module Ixtlan
 
       private
 
-      def self.filter
-        @filter ||= HashFilter.new
+      def self.config
+        @config ||= FilterConfig.new
       end
 
       def filter
-        @filter ||= self.class.filter.dup
+        @filter ||= HashFilter.new
       end
 
       protected
 
       def self.default_context_key(default)
-        filter.default_context_key(default)
+        config.default_context_key(default)
       end
 
       def self.add_context(key, options = {})
-        filter[key] = options
+        config[key] = options
       end
 
       public
 
       def use(context_or_options)
-        filter.use(context_or_options)
+        @context_or_options = context_or_options
         self
       end
       
       def from_array_hash( data )
-        if filter.root
-          data.collect{ |d| @model_class.new( filter.filter( d[ filter.root ] ) ) }
+        if self.class.config.root
+          data.collect{ |d| @model_class.new( filter.filter( d[ self.class.filter.root ] ) ) }
         else
           data.collect{ |d| @model_class.new( filter.filter( d ) ) }
         end
@@ -43,11 +43,11 @@ module Ixtlan
       private :from_array_hash
 
       def from_hash(data, options = nil)
-        filter.use( options ) if options
+        filter.options = options if options
         if data.is_a? Array
           from_array_hash( data )
         else
-          data = data[ filter.root ] if filter.root
+          data = data[ self.class.config.root ] if self.class.config.root
           @model_class.new( filter.filter( data ) )
         end
       end
