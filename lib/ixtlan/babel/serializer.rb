@@ -60,6 +60,10 @@ module Ixtlan
         config[key] = options
       end
 
+      def self.root( root )
+        config.root = root
+      end
+
       public
 
       def use( context_or_options )
@@ -70,7 +74,7 @@ module Ixtlan
       def to_hash(options = nil)
         setup_filter( options )
         if collection?
-           @model_or_models.collect do |m|
+          @model_or_models.collect do |m|
             filter_model( m )
           end
         else
@@ -89,6 +93,7 @@ module Ixtlan
               self.class.config.single_options( @context_or_options )
             end
         filter.options = o.merge!( options || {} )
+        filter.options[:root] ||= self.class.config.root
       end
       private :setup_filter
 
@@ -102,7 +107,7 @@ module Ixtlan
 
         result = to_hash
 
-        root = filter.root
+        root = config.root
 
         if root && result.is_a?(Array) && root.respond_to?(:pluralize)
           root = root.pluralize
@@ -123,8 +128,8 @@ module Ixtlan
       private
 
       def filter_model( model )
-        if root = self.class.config.root
-          {root.to_s => filter.filter( model ){ |model| attr(model) } }
+        if root = filter.options[:root]
+          { root.to_s => filter.filter( model ){ |model| attr(model) } }
         else
           filter.filter( model ){ |model| attr(model) }
         end
