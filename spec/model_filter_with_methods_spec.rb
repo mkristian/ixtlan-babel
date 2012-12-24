@@ -78,8 +78,8 @@ describe Ixtlan::Babel::ModelFilter.to_s + ':with_methods' do
   end
 
   it 'should serialize and deserialize with root' do
-    json = serializer.to_json :root => :my
-    result = deserializer.from_json(json, :root => :my)
+    json = serializer.to_json :root => 'my'
+    result = deserializer.from_json(json, :root => 'my')
     attributes = result.attributes.delete_if { |k,v| v.nil? }
     attributes.must_equal Hash[:id => person['id'], :name => person['name']]
   end  

@@ -43,8 +43,8 @@ describe Ixtlan::Babel::HashFilter do
   end
 
   it 'should serialize and deserialize a hash with root' do
-    json = serializer.to_json :root => :my
-    result = deserializer.from_json(json, :root => :my)
+    json = serializer.to_json :root => 'my'
+    result = deserializer.from_json(json, :root => 'my')
     result.must_equal Hash['id' => data['id'], 'name' => data['name']]
   end  
 

@@ -34,8 +34,8 @@ module Ixtlan
       end
       
       def from_array_hash( data )
-        if self.class.config.root
-          data.collect{ |d| @model_class.new( filter.filter( d[ self.class.filter.root ] ) ) }
+        if filter.options[:root]
+          data.collect{ |d| @model_class.new( filter.filter( d[ filter.options[:root] ] ) ) }
         else
           data.collect{ |d| @model_class.new( filter.filter( d ) ) }
         end
@@ -43,11 +43,12 @@ module Ixtlan
       private :from_array_hash
 
       def from_hash(data, options = nil)
-        filter.options = options if options
+        filter.options = options || {}
+        filter.options[:root] ||= self.class.config.root
         if data.is_a? Array
           from_array_hash( data )
         else
-          data = data[ self.class.config.root ] if self.class.config.root
+          data = data[ filter.options[:root] ] if filter.options[:root]
           @model_class.new( filter.filter( data ) )
         end
       end
