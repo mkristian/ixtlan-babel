@@ -4,6 +4,20 @@ module Ixtlan
 
       NANOSECONDS_IN_DAY = Rational(1, 86400*10**9)
 
+      TIME_TO_S = Proc.new do |t|
+        t.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % t.usec) + t.strftime('%z')
+      end
+
+      DATE_TIME_TO_S = Proc.new do |dt|
+        dt.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % (dt.sec_fraction / NANOSECONDS_IN_DAY / 1000)) + dt.strftime('%z')
+      end
+      
+      DEFAULT_MAP = {
+        'DateTime' => DATE_TIME_TO_S,
+        'ActiveSupport::TimeWithZone' => TIME_TO_S,
+        'Time' => TIME_TO_S
+      }
+
       class EmptyArraySerializer < Array
         def use(arg)
           self
@@ -11,16 +25,7 @@ module Ixtlan
       end
 
       def initialize(custom_serializers = {})
-        @map = {}
-        add('DateTime') do |dt|
-          dt.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % (dt.sec_fraction / NANOSECONDS_IN_DAY / 1000)) + dt.strftime('%z')
-        end
-        add('ActiveSupport::TimeWithZone') do |tz|
-          tz.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % tz.usec) + tz.strftime('%z')
-        end
-        add('Time') do |t|
-          t.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % t.usec) + t.strftime('%z')
-        end
+        @map = DEFAULT_MAP.dup
         @map.merge!(custom_serializers)
       end
 
@@ -31,7 +36,7 @@ module Ixtlan
       def new(resource)
         if resource.respond_to?(:model)
           model = resource.model
-        elsif resource.is_a? Array
+        elsif resource.respond_to? :collect
           if resource.empty?
             return EmptyArraySerializer.new
           else
@@ -41,9 +46,17 @@ module Ixtlan
         else
           model = resource.class
         end
-        ser = Object.const_get("#{model}Serializer").new(resource)
+        ser = const_retrieve("#{model}Serializer").new(resource)
         ser.add_custom_serializers(@map)
         ser
+      end
+
+      def const_retrieve( const )
+        obj = Object
+        const.split(/::/).each do |part|
+          obj = obj.const_get( part )
+        end
+        obj
       end
     end
   end
