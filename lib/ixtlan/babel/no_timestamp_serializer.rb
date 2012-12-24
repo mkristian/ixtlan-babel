@@ -4,13 +4,9 @@ module Ixtlan
     class NoTimestampSerializer < Serializer
       
       def self.add_defaults(root = nil)
-        if root
-          add_context(:default, :root => root)
-          add_no_timestamp_context(:collection, :root => root)
-        else
-          add_context(:default)
-          add_no_timestamp_context(:collection)
-        end
+        self.root root
+        add_context(:default)
+        add_no_timestamp_context(:collection)
       end
 
       def self.add_no_timestamp_context(key, options = {})
