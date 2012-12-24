@@ -11,3 +11,21 @@ the first problem I had was that I needed serveral options map at different cont
 the next problem was that I could include the result of a given method with `:methods => ['age']` but only on the root level of the object tree. but if I wanted to `age` method to be part of the serialization somewhere deep inside the object tree, it is not possible.
 
 please have a look at **spec/filter_spec.rb** how to use it :)
+
+TODO usage
+==========
+
+Contributing
+------------
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
+
+meta-fu
+-------
+
+enjoy :) 
+
