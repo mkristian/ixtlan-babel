@@ -2,3 +2,4 @@ playground
 target
 *.pom
 Gemfile.lock
+*.gem
