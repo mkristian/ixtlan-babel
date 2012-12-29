@@ -90,7 +90,7 @@ describe Ixtlan::Babel::ModelFilter do
 
     # travis sees empty array and locally it is nil :(
     result.attributes[ :phone_numbers ] ||= []
-    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>nil, :id => nil]
+    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
   end
 
   it 'should serialize and deserialize with only' do
@@ -99,13 +99,13 @@ describe Ixtlan::Babel::ModelFilter do
 
     # travis sees empty array and locally it is nil :(
     result.attributes[ :phone_numbers ] ||= []
-    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>nil, :id => nil]
+    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
 
     result = deserializer.from_json(json)
 
     # travis sees empty array and locally it is nil :(
     result.attributes[ :phone_numbers ] ||= []
-    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>nil, :id => nil]
+    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
   end
 
   it 'should serialize and deserialize with nested only' do
