@@ -3,3 +3,4 @@ target
 *.pom
 Gemfile.lock
 *.gem
+.rbenv-version
