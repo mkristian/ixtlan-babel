@@ -56,7 +56,7 @@ describe Ixtlan::Babel::ModelFilter do
   it 'should serialize and deserialize with root' do
     json = serializer.to_json :root => 'my'
     result = deserializer.from_json(json, :root => 'my')
-    attributes = result.attributes.delete_if { |k,v| v.nil? }
+    attributes = result.attributes.delete_if { |k,v| v.nil? || v.empty? }
     attributes.must_equal Hash[:id => person['id'], :name => person['name']]
   end  
 

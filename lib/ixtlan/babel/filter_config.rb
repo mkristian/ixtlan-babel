@@ -38,11 +38,11 @@ module Ixtlan
       end
 
       def single_options( context_or_options )
-        context_options( context_or_options ) || (context[default_context_key[0]]) || {}
+        context_options( context_or_options ) || context[ default_context_key[ 0 ] ] || {}
       end
 
       def collection_options( context_or_options )
-        context_options( context_or_options ) || (context[default_context_key[1]]) || {}
+        context_options( context_or_options ) || context[ default_context_key[ 1 ] ] || {}
       end
 
       attr_accessor :root
