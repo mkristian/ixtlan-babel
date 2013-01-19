@@ -29,11 +29,11 @@ module Ixtlan
         @map.merge!(custom_serializers)
       end
 
-      def add(clazz, &block)
-        @map[clazz.to_s] = block
+      def add( clazz, &block )
+        @map[ clazz.to_s ] = block
       end
 
-      def new(resource)
+      def new_serializer( resource )
         if resource.respond_to?(:model)
           model = resource.model
         elsif resource.respond_to? :collect
@@ -41,14 +41,23 @@ module Ixtlan
             return EmptyArraySerializer.new
           else
             r = resource.first
-            model = r.respond_to?(:model) ? r.model : r.class
+            model = r.respond_to?( :model ) ? r.model : r.class
           end
         else
           model = resource.class
         end
-        ser = const_retrieve("#{model}Serializer").new(resource)
-        ser.add_custom_serializers(@map)
+        ser = const_retrieve( "#{model}Serializer" ).new( resource )
+        ser.add_custom_serializers( @map )
         ser
+      end
+
+      def new( resource )
+        warn 'DEPRECATED use new_serializer instead'
+        new_serializer( resource )
+      end
+
+      def new_filter( clazz )
+        const_retrieve( "#{clazz}Filter" ).new( clazz )
       end
 
       def const_retrieve( const )

@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'ixtlan/babel/deserializer'
 
 class Hash
   def attributes

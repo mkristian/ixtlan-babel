@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'virtus'
+require 'ixtlan/babel/deserializer'
 
 class Address
   include Virtus
@@ -82,15 +83,23 @@ describe Ixtlan::Babel::ModelFilter do
     json = serializer.to_json(:except => ['id'])  
     result = deserializer.from_json(json, :except => ['id'])  
     
+    expected = Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
+
     # travis sees empty array and locally it is nil :(
-    result.attributes[ :phone_numbers ] ||= []
-    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
+    result.phone_numbers ||= []
+
+    result.attributes.keys.dup.each do |k|
+      result.attributes[ k ].must_equal expected[ k ]
+    end
 
     result = deserializer.from_json(json)
 
     # travis sees empty array and locally it is nil :(
-    result.attributes[ :phone_numbers ] ||= []
-    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
+    result.phone_numbers ||= []
+
+    result.attributes.keys.dup.each do |k|
+      result.attributes[ k ].must_equal expected[ k ]
+    end
   end
 
   it 'should serialize and deserialize with only' do
@@ -98,14 +107,20 @@ describe Ixtlan::Babel::ModelFilter do
     result = deserializer.from_json(json, :only => ['name'])
 
     # travis sees empty array and locally it is nil :(
-    result.attributes[ :phone_numbers ] ||= []
-    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
+    result.phone_numbers ||= []
+
+    expected = Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
+    result.attributes.keys.dup.each do |k|
+      result.attributes[ k ].must_equal expected[ k ]
+    end
 
     result = deserializer.from_json(json)
 
     # travis sees empty array and locally it is nil :(
-    result.attributes[ :phone_numbers ] ||= []
-    result.attributes.must_equal Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
+    result.phone_numbers ||= []
+    result.attributes.keys.dup.each do |k|
+      result.attributes[ k ].must_equal expected[ k ]
+    end
   end
 
   it 'should serialize and deserialize with nested only' do
