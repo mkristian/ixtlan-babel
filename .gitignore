@@ -1,6 +1,6 @@
 playground
 target
-*.pom
+*.pom.xml
 Gemfile.lock
 *.gem
 .rbenv-version
