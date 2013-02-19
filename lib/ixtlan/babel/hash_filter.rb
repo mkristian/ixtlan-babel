@@ -37,7 +37,7 @@ module Ixtlan
           if item.is_a?( Array ) || item.is_a?( Hash )
             filter_data( item, options )
           else
-            item
+            serialize( item )
           end
         end
       end

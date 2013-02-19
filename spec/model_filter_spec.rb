@@ -28,6 +28,7 @@ class Person
   attribute :name, String
   attribute :address, Address
   attribute :phone_numbers, Array[PhoneNumber]
+  attribute :children_names, Array[Symbol]
 end
 
 describe Ixtlan::Babel::ModelFilter do
@@ -40,7 +41,8 @@ describe Ixtlan::Babel::ModelFilter do
         :prefix => 12, 
         :number => '123',
         :area => Area.new( :code => '001', :iso => 'us' )
-      )]
+      )],
+      :children_names => [:adi, :aromal, :shreedev]
     )
   end
 
@@ -198,5 +200,11 @@ describe Ixtlan::Babel::ModelFilter do
     result.phone_numbers[0].number.must_equal person.phone_numbers[0].number
     result.name.must_equal person.name
     result.id.must_equal person.id
+  end
+
+  it 'should convert elements from arrays wth custom serializer' do
+    serializer.add_custom_serializers( "Symbol" => Proc.new {|v| v.to_s.capitalize } )
+    data = serializer.to_hash(:include => [ :children_names ])
+    data[ "children_names"].must_equal( ["Adi", "Aromal", "Shreedev"] )
   end
 end

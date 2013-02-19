@@ -97,4 +97,11 @@ describe Ixtlan::Babel::HashFilter do
     result = deserializer.from_json(json, :include => { 'address' => {}, 'phone_numbers' => { :include => ['area']}})
     result.must_equal data
   end
+
+  it 'should convert elements from arrays wth custom serializer' do
+    serializer.add_custom_serializers( "Symbol" => Proc.new {|v| v.to_s.capitalize } )
+    data['children_names'] = [:adi, :aromal, :shreedev]
+    d = serializer.to_hash(:include => [ :children_names ])
+    d[ "children_names"].must_equal( ["Adi", "Aromal", "Shreedev"] )
+  end
 end

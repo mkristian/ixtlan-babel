@@ -39,7 +39,7 @@ module Ixtlan
           if i.respond_to? :attributes
             filter_data(i, block.call(i), options, &block)
           else
-            i
+            serialize( i )
           end
         end
       end
