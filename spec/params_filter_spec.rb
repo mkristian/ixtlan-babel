@@ -41,7 +41,7 @@ describe Ixtlan::Babel::ParamsFilter do
 
   it 'should filter a hash with keep' do
     json = filter.use( :keep => ['id'] ).filter_it( data )
-    json[0].must_equal Hash[ 'id' => data['id'], 'name' => data['name'] ]
+    json[0].must_equal Hash[ 'name' => data['name'] ]
     json[1].must_equal Hash[ 'id' => data['id'] ]
   end
 

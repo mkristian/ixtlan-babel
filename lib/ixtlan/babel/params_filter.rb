@@ -59,14 +59,21 @@ module Ixtlan
         @context_or_options = context_or_options
         self
       end
+
       def filter_it( data )
         filter.options = self.class.config.single_options( @context_or_options )
+        data = data.dup
         data = data[ filter.options[ :root ] ] if filter.options[ :root ]
         keeps = {}
         ( filter.options[ :keep ] || [] ).each do |k|
-          keeps[ k.to_s ] = data[ k.to_s ] || data[ k.to_sym ]
+          keep = data[ k.to_s ] || data[ k.to_sym ]
+          keeps[ k.to_s ] = data.delete( k.to_s ) || data.delete( k.to_sym ) unless keep.is_a? Hash
         end
-        [ filter.filter( data ), keeps ]
+        filtered_data = filter.filter( data )
+        ( filter.options[ :keep ] || [] ).each do |k|
+          keeps[ k.to_s ] = filtered_data.delete( k.to_s ) || filtered_data.delete( k.to_sym ) unless keeps.member?( k.to_s )
+        end
+        [ filtered_data, keeps ]
       end
 
       def new( data )
