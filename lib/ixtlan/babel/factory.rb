@@ -22,14 +22,14 @@ module Ixtlan
   module Babel
     class Factory
 
-      NANOSECONDS_IN_DAY = Rational(1, 86400*10**9)
+      NANOSECONDS_IN_DAY = 86400*10**6
 
       TIME_TO_S = Proc.new do |t|
         t.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % t.usec) + t.strftime('%z')
       end
 
       DATE_TIME_TO_S = Proc.new do |dt|
-        dt.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % (dt.sec_fraction / NANOSECONDS_IN_DAY / 1000)) + dt.strftime('%z')
+        dt.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % (dt.sec_fraction * NANOSECONDS_IN_DAY ) ) + dt.strftime('%z')
       end
       
       DEFAULT_MAP = {
