@@ -61,7 +61,7 @@ describe Ixtlan::Babel::ModelFilter.to_s + ':with_methods' do
 
   it 'should serialize and deserialize with methods' do
     json = serializer.to_json(:include => [:age, :children_names, :children_ages])
-    data = JSON.parse(json)
+    data = MultiJson.load(json)
     data['age'].must_equal 123
     data['children_names'].must_equal ['anna', 'jack', 'rama', 'mia']
     data['children_ages'].must_equal [12, 3, 6, 9]
@@ -86,7 +86,7 @@ describe Ixtlan::Babel::ModelFilter.to_s + ':with_methods' do
 
   it 'should serialize and deserialize a hash with include list' do
     json = serializer.to_json(:include => ['address', 'phone_numbers'])   
-    data = JSON.parse(json)
+    data = MultiJson.load(json)
     data['phone_numbers'][0]['prefix'].must_equal 12
     data['phone_numbers'][0]['number'].must_equal '123'
     result = deserializer.from_json(json, :include => ['address', 'phone_numbers'])

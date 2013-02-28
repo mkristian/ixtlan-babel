@@ -23,5 +23,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'copyright-header', '~> 1.0.7'
   s.add_development_dependency 'minitest', '~> 4.3'
   s.add_development_dependency 'virtus', '~> 0.5.0'
-  s.add_development_dependency 'json', '~> 1.7'
+  s.add_development_dependency 'multi_json', '~> 1.6'
 end

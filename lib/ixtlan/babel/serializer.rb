@@ -18,6 +18,7 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
+require 'multi_json'
 require 'ixtlan/babel/hash_filter'
 require 'ixtlan/babel/model_filter'
 require 'ixtlan/babel/filter_config'

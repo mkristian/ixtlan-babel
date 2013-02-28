@@ -18,6 +18,7 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
+require 'multi_json'
 module Ixtlan
   module Babel
     class Deserializer
@@ -74,7 +75,7 @@ module Ixtlan
       end
 
       def from_json(json, options = nil)
-        data = JSON.parse(json)
+        data = MultiJson.load(json)
         from_hash(data, options)
       end
       
