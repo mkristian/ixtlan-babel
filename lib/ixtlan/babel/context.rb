@@ -47,7 +47,7 @@ module Ixtlan
       end
 
       def include?( key )
-        @include.include? key
+        @include.include?( key ) || @methods.include?( key ) 
       end
 
       def array?
