@@ -85,10 +85,11 @@ describe Ixtlan::Babel::ModelFilter do
     json = serializer.to_json(:except => ['id'])  
     result = deserializer.from_json(json, :except => ['id'])  
     
-    expected = Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
+    expected = Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil, :children_names => []]
 
     # travis sees empty array and locally it is nil :(
     result.phone_numbers ||= []
+    result.children_names ||= []
 
     result.attributes.keys.dup.each do |k|
       result.attributes[ k ].must_equal expected[ k ]
@@ -98,6 +99,7 @@ describe Ixtlan::Babel::ModelFilter do
 
     # travis sees empty array and locally it is nil :(
     result.phone_numbers ||= []
+    result.children_names ||= []
 
     result.attributes.keys.dup.each do |k|
       result.attributes[ k ].must_equal expected[ k ]
@@ -110,8 +112,9 @@ describe Ixtlan::Babel::ModelFilter do
 
     # travis sees empty array and locally it is nil :(
     result.phone_numbers ||= []
+    result.children_names ||= []
 
-    expected = Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil]
+    expected = Hash[:name => person['name'], :address=>nil, :phone_numbers=>[], :id => nil, :children_names => []]
     result.attributes.keys.dup.each do |k|
       result.attributes[ k ].must_equal expected[ k ]
     end
@@ -120,6 +123,8 @@ describe Ixtlan::Babel::ModelFilter do
 
     # travis sees empty array and locally it is nil :(
     result.phone_numbers ||= []
+    result.children_names ||= []
+
     result.attributes.keys.dup.each do |k|
       result.attributes[ k ].must_equal expected[ k ]
     end
