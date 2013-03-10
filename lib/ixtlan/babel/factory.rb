@@ -56,7 +56,7 @@ module Ixtlan
       def new_serializer( resource )
         if resource.respond_to?(:model)
           model = resource.model
-        elsif resource.respond_to? :collect
+        elsif resource.respond_to?( :collect) && !resource.respond_to?( :to_hash)
           if resource.empty?
             return EmptyArraySerializer.new
           else
