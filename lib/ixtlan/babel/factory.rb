@@ -30,7 +30,7 @@ module Ixtlan
       end
 
       DATE_TIME_TO_S = Proc.new do |dt|
-        dt.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % (dt.sec_fraction * NANOSECONDS_IN_DAY ) ) + dt.strftime('%z')
+        dt.strftime('%Y-%m-%dT%H:%M:%S.') + ("%06d" % (dt.sec_fraction * NANOSECONDS_IN_DAY ) )[0..6] + dt.strftime('%z')
       end
       
       DEFAULT_MAP = {
