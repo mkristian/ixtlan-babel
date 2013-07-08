@@ -4,5 +4,5 @@ class DataMapper::Validations::ValidationErrorsSerializer < Ixtlan::Babel::Seria
   def to_hash( o = nil)
     @model_or_models.to_hash
   end
-  
+
 end

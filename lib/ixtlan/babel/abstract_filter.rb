@@ -28,7 +28,7 @@ module Ixtlan
       def options
         @options || {}
       end
-        
+
       def add_custom_serializers( map )
         @map = map
       end
@@ -40,7 +40,7 @@ module Ixtlan
           data
         end
       end
-      
+
     end
   end
 end

@@ -25,7 +25,7 @@ module Ixtlan
 
       def filter( data )
         if data
-          filter_data( data, 
+          filter_data( data,
                        Context.new( options ) )
         end
       end
@@ -33,7 +33,7 @@ module Ixtlan
       private
 
       def filter_array( array, options )
-        array.collect do |item| 
+        array.collect do |item|
           if item.is_a?( Array ) || item.is_a?( Hash )
             filter_data( item, options )
           else
@@ -48,9 +48,11 @@ module Ixtlan
           k = k.to_s
           case v
           when Hash
-            result[ k ] = filter_data( v, context[ k ] ) if context.include?( k )
+            result[ k ] = filter_data( v,
+                                       context[ k ] ) if context.include?( k )
           when Array
-            result[ k ] = filter_array( v, context[ k ] ) if context.include?( k )
+            result[ k ] = filter_array( v,
+                                        context[ k ] ) if context.include?( k )
           else
             result[ k ] = serialize( v ) if context.allowed?( k )
           end

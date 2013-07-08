@@ -22,7 +22,7 @@ require 'ixtlan/babel/context'
 module Ixtlan
   module Babel
     class FilterConfig
-      
+
       private
 
       def context
@@ -32,7 +32,7 @@ module Ixtlan
       def context_options( context_or_options )
         if context_or_options
           case context_or_options
-          when Symbol  
+          when Symbol
             if opts = context[ context_or_options ]
               opts.dup
             end
@@ -44,7 +44,7 @@ module Ixtlan
 
       public
 
-      def default_context_key( single = :single, 
+      def default_context_key( single = :single,
                                collection = :collection )
         @single, @collection = single, collection
       end
@@ -58,11 +58,13 @@ module Ixtlan
       end
 
       def single_options( context_or_options )
-        context_options( context_or_options ) || context[ default_context_key[ 0 ] ] || {}
+        context_options( context_or_options ) ||
+          context[ default_context_key[ 0 ] ] || {}
       end
 
       def collection_options( context_or_options )
-        context_options( context_or_options ) || context[ default_context_key[ 1 ] ] || {}
+        context_options( context_or_options ) ||
+          context[ default_context_key[ 1 ] ] || {}
       end
 
       attr_accessor :root

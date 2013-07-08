@@ -28,7 +28,7 @@ module Ixtlan
           data = block.call( model )
           filter_data( model, data,
                        Context.new( options ),
-                       &block ) 
+                       &block )
         end
       end
 
@@ -54,16 +54,22 @@ module Ixtlan
 
       def filter_data(model, data, context, &block)
         setup_data(model, data, context)
-        
+
         result = {}
         data.each do |k,v|
           k = k.to_s
           if v.respond_to? :attributes
-            result[ k ] = filter_data( v, block.call(v), context[ k ], &block ) if context.include?( k )
+            result[ k ] = filter_data( v,
+                                       block.call(v),
+                                       context[ k ],
+                                       &block ) if context.include?( k )
           elsif v.is_a? Array
-            result[ k ] = filter_array( v, context[ k ], &block ) if context.include?( k )
+            result[ k ] = filter_array( v,
+                                        context[ k ],
+                                        &block ) if context.include?( k )
           else
-            result[ k ] = serialize( v ) if context.allowed?( k ) && ! v.respond_to?( :attributes )
+            result[ k ] = serialize( v ) if context.allowed?( k ) &&
+              ! v.respond_to?( :attributes )
           end
         end
         result

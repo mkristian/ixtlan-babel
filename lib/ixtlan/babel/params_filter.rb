@@ -60,6 +60,37 @@ module Ixtlan
         self
       end
 
+      class FilterResult
+
+        def initialize( model, params, keeps )
+          @model = model
+          @data = keeps
+          @data[ :params ] = params
+        end
+
+        def new_model
+          @model.send( :new, params )
+        end
+
+        def params
+          @data[ :params ]
+        end
+
+        def method_missing( method, *args )
+          if respond_to?( method )
+            @data[ method ] || @data[ method.to_s ]
+          elsif @data.respond_to?( method )
+            @data.send( method, *args )
+          else
+            super
+          end
+        end
+
+        def respond_to?( method )
+          @data.key?( method ) || @data.key?( method.to_s )
+        end
+      end
+
       def filter_it( data )
         filter.options = self.class.config.single_options( @context_or_options )
         data = data.dup
@@ -67,17 +98,15 @@ module Ixtlan
         keeps = {}
         ( filter.options[ :keep ] || [] ).each do |k|
           keep = data[ k.to_s ] || data[ k.to_sym ]
-          keeps[ k.to_s ] = data.delete( k.to_s ) || data.delete( k.to_sym ) unless keep.is_a? Hash
+          keeps[ k.to_s ] = data.delete( k.to_s ) ||
+            data.delete( k.to_sym ) unless keep.is_a? Hash
         end
         filtered_data = filter.filter( data )
         ( filter.options[ :keep ] || [] ).each do |k|
-          keeps[ k.to_s ] = filtered_data.delete( k.to_s ) || filtered_data.delete( k.to_sym ) unless keeps.member?( k.to_s )
+          keeps[ k.to_s ] = filtered_data.delete( k.to_s ) ||
+            filtered_data.delete( k.to_sym ) unless keeps.member?( k.to_s )
         end
-        [ filtered_data, keeps ]
-      end
-
-      def new( data )
-        @model_class.new( filter( data ) )
+        FilterResult.new( @model_class, filtered_data, keeps )
       end
     end
   end

@@ -37,7 +37,7 @@ module Ixtlan
       def initialize(model_or_models)
         @model_or_models = model_or_models
       end
-      
+
       def respond_to?(method)
         @model_or_models.respond_to?(method)
       end
@@ -45,7 +45,7 @@ module Ixtlan
       def method_missing(method, *args, &block)
         @model_or_models.send(method, *args, &block)
       end
-      
+
       def add_custom_serializers(map)
         filter.add_custom_serializers(map)
       end
@@ -57,7 +57,7 @@ module Ixtlan
       end
 
       def filter
-        @filter ||= @model_or_models.is_a?( Hash ) ? HashFilter.new :  ModelFilter.new
+        @filter ||= ModelFilter.new
       end
 
       protected
@@ -119,7 +119,8 @@ module Ixtlan
       private :setup_filter
 
       def collection?
-        @is_collection ||= @model_or_models.respond_to?(:collect) && ! @model_or_models.is_a?(Hash)
+        @is_collection ||= @model_or_models.respond_to?(:collect) &&
+          ! @model_or_models.is_a?(Hash)
       end
       private :collection?
 
@@ -139,7 +140,7 @@ module Ixtlan
       def to_yaml(options = nil)
         to_hash(options).to_yaml
       end
-      
+
       protected
 
       def attr(model)
@@ -154,7 +155,7 @@ module Ixtlan
         else
           filter.filter( model ){ |model| attr(model) }
         end
-      end 
+      end
     end
   end
 end
