@@ -42,7 +42,7 @@ describe Ixtlan::Babel::ParamsFilter do
   it 'should filter a hash with keep' do
     result = filter.use( :keep => ['id'] ).filter_it( data )
     result.params.must_equal Hash[ 'name' => data['name'] ]
-    result.id.must_equal data['id']
+    result[ 'id' ].must_equal data['id']
     result.size.must_equal 2
   end
 
@@ -82,7 +82,7 @@ describe Ixtlan::Babel::ParamsFilter do
   it 'should filter a hash with only and keep' do
     result = filter.use( :only => ['name'], :keep => ['id'] ).filter_it( data )
     result.params.must_equal Hash['name' => data['name']]
-    result.id.must_equal data['id']
+    result[ 'id' ].must_equal data['id']
     result.size.must_equal 2
   end
 
