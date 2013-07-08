@@ -20,8 +20,7 @@ Gem::Specification.new do |s|
   s.test_files += Dir['spec/**/*_spec.rb']
 
   s.add_development_dependency 'rake', '~> 10.0'
-  s.add_development_dependency 'copyright-header', '~> 1.0.7'
-  s.add_development_dependency 'minitest', '~> 5.0'
+  s.add_development_dependency 'minitest', '~> 4.0'
   s.add_development_dependency 'virtus', '~> 0.5'
   s.add_development_dependency 'multi_json', '~> 1.6'
   s.add_development_dependency 'json', '~> 1.7'
