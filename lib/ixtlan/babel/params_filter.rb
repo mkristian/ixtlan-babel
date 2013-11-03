@@ -45,12 +45,42 @@ module Ixtlan
         config.default_context_key(default)
       end
 
-      def self.add_context(key, options = {})
-        config[key] = options
+      def self.add_context( key = :single, options = nil, &block )
+        current = config[key] = options || { :only => [] }
+        @context = key
+        yield if block
+        current[ :keep ] = @keep if @keep
+        current.merge!( @allow ) if @allow
+        current[ :root ] = @root
+      ensure
+        @context = nil
+	@allow = nil
+	@keep = nil
+        @root = nil
       end
 
       def self.root( root )
-        config.root = root
+        if @context
+          @root = root
+        else
+          config.root = root
+        end
+      end
+
+      def self.keep( *args )
+        @keep = *args
+      end
+
+      def self.only( *args )
+        result = {}
+        if args.last.is_a? Hash
+          result[ :include ] = args.last
+          result[ :only ] = args[ 0..-2 ]
+        else
+          result[ :only ] = args
+        end
+        @allow = result
+        result
       end
 
       public
@@ -70,6 +100,10 @@ module Ixtlan
 
         def new_model
           @model.send( :new, params )
+        end
+
+        def []( key )
+           params[ key ]
         end
 
         def params
@@ -105,6 +139,8 @@ module Ixtlan
         ( filter.options[ :keep ] || [] ).each do |k|
           keeps[ k.to_s ] = filtered_data.delete( k.to_s ) ||
             filtered_data.delete( k.to_sym ) unless keeps.member?( k.to_s )
+          # just make sure we have an entry for each keeps key
+          keeps[ k.to_s ] ||= nil
         end
         FilterResult.new( @model_class, filtered_data, keeps )
       end

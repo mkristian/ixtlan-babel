@@ -51,8 +51,10 @@ module Ixtlan
             result[ k ] = filter_data( v,
                                        context[ k ] ) if context.include?( k )
           when Array
-            result[ k ] = filter_array( v,
-                                        context[ k ] ) if context.include?( k )
+            if context.allowed?( k ) || context.include?( k )
+              result[ k ] = filter_array( v,
+                                          context[ k ] )
+            end
           else
             result[ k ] = serialize( v ) if context.allowed?( k )
           end

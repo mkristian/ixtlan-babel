@@ -21,6 +21,7 @@ describe Ixtlan::Babel::ParamsFilter do
       'id' => 987,
       'name' => 'me and the corner',
       'address' => { 'street' => 'Foo 12', 'zipcode' => '12345' },
+      'list' => [1,2,3,4],
       'phone_numbers' => {
         'prefix' => 12,
         'number' => '123',
@@ -34,79 +35,99 @@ describe Ixtlan::Babel::ParamsFilter do
   let(:deserializer) { Ixtlan::Babel::Deserializer.new(Hash) }
 
   it 'should filter a hash' do
-    result = filter.filter_it( data )
-    result.params.must_equal Hash[ 'id' => data['id'], 'name' => data['name'] ]
+    AFilter.add_context( :plain )
+    result = filter.use( :plain ).filter_it( data )
+    result.params.must_equal Hash[]
     result.size.must_equal 1
   end
 
   it 'should filter a hash with keep' do
-    result = filter.use( :keep => ['id'] ).filter_it( data )
-    result.params.must_equal Hash[ 'name' => data['name'] ]
+    class AFilter
+      add_context( :keep ) do
+        keep :id
+      end
+    end
+    result = filter.use( :keep ).filter_it( data )
+    result.params.must_equal Hash[]
     result.id.must_equal data['id']
     result.size.must_equal 2
   end
 
   it 'should filter a hash with root' do
-    result = filter.use( :root => 'my' ).filter_it( 'my' => data )
+    class AFilter
+      add_context( :root ) do
+        root 'my'
+        only :id, :name
+      end
+    end
+    result = filter.use( :root ).filter_it( 'my' => data )
     result.params.must_equal Hash[ 'id' => data['id'], 'name' => data['name'] ]
     result.size.must_equal 1
   end
 
-  it 'should filter a hash with include list' do
-    result = filter.use( :include => ['address',
-                                    'phone_numbers'] ).filter_it( data )
+  it 'should filter a nested object' do
+    class AFilter
+      add_context( :nested ) do
+        only( :id, :name,
+              :address => only( :street, :zipcode),
+              :phone_numbers => only( :prefix, :number ) )
+      end
+    end
+    result = filter.use( :nested ).filter_it( data )
 
     data['phone_numbers'].delete('area')
+    data.delete('list')
     result.params.must_equal Hash[data]
     result.size.must_equal 1
   end
 
-  it 'should filter a hash with except' do
-    result = filter.use( :except => ['id'] ).filter_it( data )
-    result.params.must_equal Hash['name' => data['name']]
-    result.size.must_equal 1
-  end
-
-  it 'should filter a hash with except and keep' do
-    result = filter.use( :except => ['id'], :keep => ['id'] ).filter_it( data )
-    result.params.must_equal Hash['name' => data['name']]
-    result.id.must_equal data['id']
-  end
-
   it 'should filter a hash with only' do
-    result = filter.use( :only => ['name'] ).filter_it( data )
+    class AFilter
+      add_context( :only ) do
+        only :name
+      end
+    end
+    result = filter.use( :only ).filter_it( data )
     result.params.must_equal Hash['name' => data['name']]
     result.size.must_equal 1
   end
 
   it 'should filter a hash with only and keep' do
-    result = filter.use( :only => ['name'], :keep => ['id'] ).filter_it( data )
+    class AFilter
+      add_context( :only_and_keep ) do
+        keep :id
+        only :name
+      end
+    end
+    result = filter.use( :only_and_keep ).filter_it( data )
     result.params.must_equal Hash['name' => data['name']]
     result.id.must_equal data['id']
     result.size.must_equal 2
   end
 
   it 'should filter a hash with nested only' do
-    result = filter.use( :include => { 'address' =>
-                         {:only => ['street']}} ).filter_it( data )
+    class AFilter
+      add_context( :filtered_nested ) do
+        only :id, :name, :list, :address => only( :street )
+      end
+    end
+    result = filter.use( :filtered_nested ).filter_it( data )
     data.delete('phone_numbers')
     data['address'].delete('zipcode')
     result.params.must_equal Hash[data]
     result.size.must_equal 1
   end
 
-  it 'should filter a hash with nested except' do
-    result = filter.use( :include => { 'address' =>
-                         {:except => ['zipcode']}} ).filter_it( data )
-    data.delete('phone_numbers')
-    data['address'].delete('zipcode')
-    result.params.must_equal Hash[data]
-    result.size.must_equal 1
-  end
-
-  it 'should filter a hash with nested include' do
-    result = filter.use( :include => { 'address' => {}, 'phone_numbers' =>
-                         { :include => ['area']}} ).filter_it( data )
+  it 'should filter a hash with deep nested include' do
+    class AFilter
+      add_context( :deep_nested ) do
+        only( :id, :name, :list,
+              :address => only( :street, :zipcode), 
+              :phone_numbers => only( :prefix, :number,
+                                      :area => only( :code, :iso ) ) )
+      end
+    end
+    result = filter.use( :deep_nested ).filter_it( data )
     result.params.must_equal Hash[data]
     result.size.must_equal 1
   end

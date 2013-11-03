@@ -77,12 +77,37 @@ module Ixtlan
         config.default_context_key(single, collection)
       end
 
-      def self.add_context(key, options = {})
-        config[key] = options
+      def self.add_context(key = :single, options = nil, &block)
+        current = config[key] = options || { :only => Array.new }
+	@only = nil
+        @root = nil
+        @context = key
+        yield if block
+        current.merge!( @only ) if @only
+        current[ :root ] = @root
+      ensure
+        @context = nil
+      end
+      
+      def self.only( *args )
+        args.flatten!
+        result = { :only => Array.new }
+        if args.last.is_a? Hash
+          result[ :include ] = args.last
+          result[ :methods ] = args[ 0..-2 ]
+        else
+          result[ :methods ] = args
+        end
+        @only = result
+        result
       end
 
       def self.root( root )
-        config.root = root
+        if @context
+          @root = root
+        else
+          config.root = root
+        end
       end
 
       public

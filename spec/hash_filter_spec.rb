@@ -4,7 +4,7 @@ class Hash
   def attributes
     self
   end
-  def method_missing(method)
+  def method_missing(method, *args)
     self[method.to_s]
   end
 end
