@@ -1,4 +1,13 @@
-properties['jruby.versions']='1.5.6,1.6.8,1.7.2'
-properties['jruby.18and19']='true'
-properties['jruby.plugins.version']='0.29.4'
-properties['jruby.version']='1.7.2'
+#-*- mode: ruby -*-
+
+gemspec
+
+properties( 'jruby.versions' => '1.6.8,1.7.8',
+            'jruby.modes' => '1.9, 2.0',
+            'jruby.plugins.version' => '1.0.0-rc4' )
+
+jruby_plugin :minitest do
+  execute_goals :spec
+end
+
+# vim: syntax=Ruby
