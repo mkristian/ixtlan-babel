@@ -130,19 +130,22 @@ module Ixtlan
         data = data.dup
         data = data[ filter.options[ :root ] ] if filter.options[ :root ]
         keeps = {}
-        ( filter.options[ :keep ] || [] ).each do |k|
-          keep = data[ k.to_s ] || data[ k.to_sym ]
-          keeps[ k.to_s ] = data.delete( k.to_s ) ||
-            data.delete( k.to_sym ) unless keep.is_a? Hash
+        opts = ( filter.options[ :keep ] || [] ).collect { |k| k.to_s }
+        opts.each do |k|
+          keep = data[ k ] || data[ k.to_sym ] 
+          unless keep.is_a? Hash
+            keeps[ k ] = data.delete( k ) || data.delete( k.to_sym )
+          end
         end
-        filtered_data = filter.filter( data )
-        ( filter.options[ :keep ] || [] ).each do |k|
-          keeps[ k.to_s ] = filtered_data.delete( k.to_s ) ||
-            filtered_data.delete( k.to_sym ) unless keeps.member?( k.to_s )
+        filtered = filter.filter( data )
+        opts.each do |k| 
+          unless keeps.member?( k )
+            keeps[ k ] = filtered.delete( k ) || filtered.delete( k.to_sym )
+          end
           # just make sure we have an entry for each keeps key
-          keeps[ k.to_s ] ||= nil
+          keeps[ k ] ||= nil
         end
-        FilterResult.new( @model_class, filtered_data, keeps )
+        FilterResult.new( @model_class, filtered, keeps )
       end
     end
   end
