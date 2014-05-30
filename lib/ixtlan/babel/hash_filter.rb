@@ -1,65 +1,138 @@
-#
-# Copyright (C) 2013 Christian Meier
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy of
-# this software and associated documentation files (the "Software"), to deal in
-# the Software without restriction, including without limitation the rights to
-# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-# the Software, and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-require 'ixtlan/babel/abstract_filter'
 module Ixtlan
   module Babel
-    class HashFilter < AbstractFilter
+    
+    module HashFilter
+
+      def self.included( model )
+        model.extend( ClassMethods )
+      end
 
       def filter( data )
-        if data
-          filter_data( data,
-                       Context.new( options ) )
+        @attributes = do_filter( data, self.class.attributes )
+      end
+
+      def hidden( data )
+        @hidden = do_filter( data, self.class.hiddens )
+      end
+
+      def attributes
+        @attributes
+      end
+      alias :params :attributes
+
+      def respond_to? name
+        key = name.to_sym
+        self.class.hiddens.key?( key ) || self.class.attributes.key?( key ) || super
+      end
+
+      def method_missing( name, *args )
+        key = name.to_sym
+        if self.class.hiddens.key?( key )
+          to_attribute( key, 
+                        @hidden[ key ] || @hidden[ key.to_s ], 
+                        self.class.hiddens )
+        elsif self.class.attributes.key?( key )
+          to_attribute( key,
+                        @attributes[ key ] || @attributes[ key.to_s ],
+                        self.class.attributes )      
+        else
+          super
         end
+      end
+
+      def to_attribute( key, v, ref )
+        case v
+        when Hash
+          ref[ key ].replace( v )
+        else
+          v
+        end
+      end
+
+      def do_filter( data, ref )
+        data.reject do |k,v|
+          case v
+          when Hash
+            if babel = ref[ k.to_sym ]
+              v.replace babel.replace( v ).attributes
+              false
+            else
+              true
+            end
+          when ::Array
+            if babel = ref[ k.to_sym ]
+              v.each do |vv|
+                vv.replace babel.replace( vv ).attributes
+              end
+              false
+            else
+              true
+            end        
+          else
+            not ref.member?( k.to_sym ) 
+          end
+        end
+      end
+      
+      def initialize
+        super()
+        replace( {} )
+      end
+
+      def replace( data )
+        data = deep_dup( data )
+        filter( data )
+        hidden( data )
+        self
       end
 
       private
 
-      def filter_array( array, options )
-        array.collect do |item|
-          if item.is_a?( Array ) || item.is_a?( Hash )
-            filter_data( item, options )
-          else
-            serialize( item )
+      def deep_dup( data )
+        data = data.dup
+        data.each do |k,v|
+          if v.is_a? Hash
+            data[ k ] = deep_dup( v )
           end
         end
       end
 
-      def filter_data( data, context )
-        result = {}
-        data.each do |k,v|
-          k = k.to_s
-          case v
-          when Hash
-            result[ k ] = filter_data( v,
-                                       context[ k ] ) if context.include?( k )
-          when Array
-            if context.allowed?( k ) || context.include?( k )
-              result[ k ] = filter_array( v,
-                                          context[ k ] )
-            end
+      module ClassMethods
+
+        def attribute( name, type = nil )
+          attributes[ name.to_sym ] = new_instance( type )
+        end
+
+        def hidden( name, type = nil )
+          hiddens[ name.to_sym ] = new_instance( type )
+        end
+
+        def attributes( *args )
+          if args.size == 0
+            @attributes ||= (superclass.attributes.dup rescue nil) || {}
           else
-            result[ k ] = serialize( v ) if context.allowed?( k )
+            args.each { |a| attribute( a ) }
           end
         end
-        result
+
+        def hiddens( *args )
+          if args.size == 0
+            @hiddens ||= (superclass.hiddens.dup rescue nil) || {}
+          else
+            args.each { |a| hidden( a ) }
+          end
+        end
+        
+        def new_instance( type )
+          case type
+          when Array
+            type[ 0 ].new
+          when NilClass
+            nil
+          else
+            type.new
+          end
+        end
       end
     end
   end

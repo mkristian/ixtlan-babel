@@ -3,13 +3,7 @@
 task :default => [ :spec ]
 
 task :spec do
-  gem 'minitest'
-  require 'minitest/autorun'
-
-  $LOAD_PATH << "spec"
-  $LOAD_PATH << "lib"
-
-  Dir['spec/*_spec.rb'].each { |f| require File.basename(f.sub(/.rb$/, '')) }
+  Dir['spec/*_spec.rb'].each { |f| require File.expand_path( f ) }
 end
 
 task :headers do
