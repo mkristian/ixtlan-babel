@@ -1,4 +1,3 @@
-*.pom.xml
 Gemfile.lock
 *.gem
 .r*-version

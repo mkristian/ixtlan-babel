@@ -108,7 +108,7 @@ module Ixtlan
         end
 
         def data( meth )
-          (superclass.send( "#{meth}s" ).dup rescue nil) || {}
+          (superclass.send( meth ).dup rescue nil) || {}
         end
         private :data
 
@@ -118,17 +118,17 @@ module Ixtlan
         private :set
 
         def attributes( *args )
+          set( :attribute, *args )
           if args.size == 0
             @attributes ||= data( :attributes )
           end
-          set( :attribute, *args )
         end
 
         def hiddens( *args )
+          set( :hidden, *args )
           if args.size == 0
             @hiddens ||= data( :hiddens )
           end
-          set( :hidden, *args )
         end
         
         def new_instance( type )
