@@ -2,7 +2,7 @@
 
 * [![Build Status](https://secure.travis-ci.org/mkristian/ixtlan-babel.png)](http://travis-ci.org/mkristian/ixtlan-babel)
 * [![Dependency Status](https://gemnasium.com/mkristian/ixtlan-babel.png)](https://gemnasium.com/mkristian/ixtlan-babel)
-* [![Code Climate](https://codeclimate.com/mkristian/ixtlan-babel.png)](https://codeclimate.com/github/mkristian/ixtlan-babel)
+* [![Code Climate](https://codeclimate.com/github/mkristian/ixtlan-babel.png)](https://codeclimate.com/github/mkristian/ixtlan-babel)
 
 
 Contributing

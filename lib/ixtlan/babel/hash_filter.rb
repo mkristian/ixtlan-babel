@@ -98,7 +98,7 @@ module Ixtlan
       end
 
       module ClassMethods
-
+       
         def attribute( name, type = nil )
           attributes[ name.to_sym ] = new_instance( type )
         end
@@ -107,20 +107,28 @@ module Ixtlan
           hiddens[ name.to_sym ] = new_instance( type )
         end
 
+        def data( meth )
+          (superclass.send( "#{meth}s" ).dup rescue nil) || {}
+        end
+        private :data
+
+        def set( meth, *args )
+          args.each { |a| send( meth, a ) }
+        end
+        private :set
+
         def attributes( *args )
           if args.size == 0
-            @attributes ||= (superclass.attributes.dup rescue nil) || {}
-          else
-            args.each { |a| attribute( a ) }
+            @attributes ||= data( :attributes )
           end
+          set( :attribute, *args )
         end
 
         def hiddens( *args )
           if args.size == 0
-            @hiddens ||= (superclass.hiddens.dup rescue nil) || {}
-          else
-            args.each { |a| hidden( a ) }
+            @hiddens ||= data( :hiddens )
           end
+          set( :hidden, *args )
         end
         
         def new_instance( type )
